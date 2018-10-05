@@ -2,7 +2,16 @@ import { GraphQLServer } from "graphql-yoga";
 
 const typeDefs = `
     type Query {
+        greeting(name: String, job: String): String!
+        add(a: Float!, b: Float!) : Float!
         post: Post!
+        me: User!
+    }
+
+    type User {
+        id: ID!
+        name: String!
+        age: Int!
     }
 
     type Post {
@@ -20,7 +29,19 @@ const resolvers = {
             title: "This title",
             body: "Oh hello this is the body",
             published: true
-        })
+        }),
+        me: () => ({
+            id: "3435",
+            name: "Josh",
+            age: 25
+        }),
+        greeting: (parent, args, ctx, info) => {
+            if (args.name) return `Hello ${args.name}!`;
+            else return `Hello`;
+        },
+        add: (undefined, { a, b }) => {
+            return a + b;
+        }
     }
 };
 
