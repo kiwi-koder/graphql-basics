@@ -44,7 +44,7 @@ const resolvers = {
             return a + b;
         },
         grades: (parent, args, ctx, info) => {
-            return [99, 80, 93];
+            return [99, 80, 95];
         }
     }
 };
