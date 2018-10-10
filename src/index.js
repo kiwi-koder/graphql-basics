@@ -1,10 +1,51 @@
 import { GraphQLServer } from "graphql-yoga";
 
+const users = [
+    {
+        id: "1",
+        name: "Joshua Rippon",
+        age: 25,
+        email: "joshuarippon1@gmail.com"
+    },
+    {
+        id: "2",
+        name: "Sarah Silverman",
+        age: 23,
+        email: "sarah@example.com"
+    },
+    {
+        id: "3",
+        name: "George Washington",
+        age: 21,
+        email: "george@example.com"
+    }
+];
+
+const posts = [
+    {
+        id: "1",
+        title: "My first post",
+        body: "This is my first post",
+        published: true
+    },
+    {
+        id: "2",
+        title: "My second post",
+        body: "This is my second post",
+        published: true
+    },
+    {
+        id: "3",
+        title: "My third post",
+        body: "This is my second post",
+        published: true
+    }
+];
+
 const typeDefs = `
     type Query {
-        greeting(name: String, job: String): String!
-        add(a: Float!, b: Float!) : Float!
-        grades: [Int!]!
+        users(query: String): [User!]!
+        posts(query: String): [Post!]!
         post: Post!
         me: User!
     }
@@ -12,6 +53,7 @@ const typeDefs = `
     type User {
         id: ID!
         name: String!
+        email: String!
         age: Int!
     }
 
@@ -25,6 +67,27 @@ const typeDefs = `
 
 const resolvers = {
     Query: {
+        users: (parent, args, ctx, info) => {
+            return args.query
+                ? users.filter(user =>
+                      user.name.toLowerCase().includes(args.query.toLowerCase())
+                  )
+                : users;
+        },
+        posts: (parent, args, ctx, infor) => {
+            return args.query
+                ? posts.filter(post => {
+                      return (
+                          post.title
+                              .toLowerCase()
+                              .includes(args.query.toLowerCase()) ||
+                          post.body
+                              .toLowerCase()
+                              .includes(args.query.toLowerCase())
+                      );
+                  })
+                : posts;
+        },
         post: () => ({
             id: "3535",
             title: "This title",
@@ -35,17 +98,7 @@ const resolvers = {
             id: "3435",
             name: "Josh",
             age: 25
-        }),
-        greeting: (parent, args, ctx, info) => {
-            if (args.name) return `Hello ${args.name}!`;
-            else return `Hello`;
-        },
-        add: (undefined, { a, b }) => {
-            return a + b;
-        },
-        grades: (parent, args, ctx, info) => {
-            return [99, 80, 95];
-        }
+        })
     }
 };
 
