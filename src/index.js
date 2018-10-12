@@ -26,19 +26,22 @@ const posts = [
         id: "1",
         title: "My first post",
         body: "This is my first post",
-        published: true
+        published: true,
+        author: "1"
     },
     {
         id: "2",
         title: "My second post",
         body: "This is my second post",
-        published: true
+        published: true,
+        author: "1"
     },
     {
         id: "3",
         title: "My third post",
         body: "This is my second post",
-        published: true
+        published: true,
+        author: "2"
     }
 ];
 
@@ -55,12 +58,14 @@ const typeDefs = `
         name: String!
         email: String!
         age: Int!
+        posts: [Post!]!
     }
 
     type Post {
         id: ID!
         title: String!
         body: String!
+        author: User!
         published: Boolean
     }
 `;
@@ -99,6 +104,18 @@ const resolvers = {
             name: "Josh",
             age: 25
         })
+    },
+    Post: {
+        author: (parent, args, ctx, info) => {
+            return users.find(user => user.id === parent.author);
+        }
+    },
+    User: {
+        posts: (parent, args, ctx, info) => {
+            return posts.filter(post => {
+                return post.author === parent.id;
+            });
+        }
     }
 };
 
