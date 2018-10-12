@@ -45,10 +45,30 @@ const posts = [
     }
 ];
 
+const comments = [
+    {
+        id: "101",
+        text: "That sucks..."
+    },
+    {
+        id: "102",
+        text: "No it doesn't!"
+    },
+    {
+        id: "103",
+        text: "Yes it does."
+    },
+    {
+        id: "10s4",
+        text: "No you are lying"
+    }
+];
+
 const typeDefs = `
     type Query {
         users(query: String): [User!]!
         posts(query: String): [Post!]!
+        comments(query: String): [Comment!]!
         post: Post!
         me: User!
     }
@@ -67,6 +87,11 @@ const typeDefs = `
         body: String!
         author: User!
         published: Boolean
+    }
+    
+    type Comment {
+        id: ID!
+        text: String!
     }
 `;
 
@@ -92,6 +117,9 @@ const resolvers = {
                       );
                   })
                 : posts;
+        },
+        comments: (parent, args, ctx, infor) => {
+            return comments;
         },
         post: () => ({
             id: "3535",
