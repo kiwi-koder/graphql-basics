@@ -85,7 +85,8 @@ const typeDefs = `
     type Mutation {
         createUser(data: CreateUserInput): User!
         deleteUser(id: ID!): User!
-        createPost(data: CreatePost): Post!
+        createPost(data: CreatePost): Post!,
+        deletePost(id: ID!): Post!,
         createComment(data: CreateComment): Comment!
     }
 
@@ -240,6 +241,19 @@ const resolvers = {
             );
 
             return deletedUser;
+        },
+        deletePost: (parent, args, ctx, info) => {
+            const postIndex = posts.findIndex(post => post.id === args.id);
+
+            if (postIndex === -1) throw new Error("Post not found");
+
+            const [deletedPost] = posts.splice(postIndex, 1);
+
+            comments = comments.filter(
+                comment => comment.post !== deletedPost.id
+            );
+
+            return deletedPost;
         }
     },
     Post: {
@@ -274,4 +288,4 @@ const resolvers = {
 
 const server = new GraphQLServer({ typeDefs, resolvers });
 
-server.start(() => console.log("The server is up"));
+server.start(({ port }) => console.log("The server is up", port));
